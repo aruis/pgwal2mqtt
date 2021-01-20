@@ -2,6 +2,12 @@
 
 捕获Postgres的数据变化，并将其转发到MQTT服务
 
+目前发送的消息是汇总版的，类似于下面:
+
+```json
+{"schema":"public","table":"edu_score","type":"update","num":1}
+```
+
 ### 原理
 
 因为Postgres的事务日志是记录了每个数据库的微小变更的，所以只要解析该日志，并把它的数据推送到mqtt服务即可
