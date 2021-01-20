@@ -1,21 +1,23 @@
 package com.aruistar.pgwal2mqtt
 
-
 import groovy.util.logging.Slf4j
 import io.vertx.core.AbstractVerticle
-import io.vertx.core.Vertx
+import io.vertx.core.DeploymentOptions
 
 @Slf4j
 class MainVerticle extends AbstractVerticle {
 
-
-    static void main(String[] args) {
-        Vertx.vertx().deployVerticle(new MainVerticle())
-    }
-
     @Override
     void start() throws Exception {
-        vertx.deployVerticle(MqttVerticle.newInstance())
-        vertx.deployVerticle(PgRecvlogical.newInstance())
+        log.info("verticle is starting")
+        log.info(config().toString())
+
+        def dbs = config().getJsonArray("dbs").toList()
+        dbs.each { it ->
+            vertx.deployVerticle(DatabaseVerticle.newInstance(), new DeploymentOptions().setConfig(it))
+        }
+
+        vertx.deployVerticle(MqttVerticle.newInstance(), new DeploymentOptions().setConfig(config().getJsonObject("mqtt")))
+
     }
 }

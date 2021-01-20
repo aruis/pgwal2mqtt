@@ -1,27 +1,39 @@
 package com.aruistar.pgwal2mqtt
 
 import com.julienviet.childprocess.Process
-import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.eventbus.DeliveryOptions
+import io.vertx.core.json.JsonArray
 
 @Slf4j
-class PgRecvlogical extends AbstractVerticle {
+class DatabaseVerticle extends AbstractVerticle {
 
     @Override
     void start() throws Exception {
         log.info("verticle is starting")
+        log.info(config().toString())
+        def config = config()
+
         def eb = vertx.eventBus()
         def jsonSlurper = new JsonSlurper()
-        def dbName = 'postgres'
+
+        def dbName = config.getString("database")
+        def username = config.getString("username")
+        def host = config.getString("host")
+        def unique = config.getString("unique")
+        def port = config.getInteger("port")
 
         def slotName = "test_slot"
 
-        "pg_recvlogical -d ${dbName} --slot ${slotName} --create-slot -P wal2json".execute()
+        "pg_recvlogical -h ${host} -p ${port} -U ${username} -d ${dbName} --slot ${slotName} --create-slot -P wal2json".execute()
 
-        Process.create(vertx, "/opt/homebrew/bin/pg_recvlogical",
+        Process.create(vertx, "pg_recvlogical",
                 [
+                        "-h", host,
+                        "-p", port.toString(),
+                        "-U", username,
                         "-d", dbName,
                         "--slot", slotName,
                         "--start",
@@ -58,7 +70,7 @@ class PgRecvlogical extends AbstractVerticle {
 
                             }
 
-                            eb.send("db.change", JsonOutput.toJson(schemas))
+                            eb.send("db.change", new JsonArray(schemas), new DeliveryOptions().addHeader("unique", unique))
                         }
                     } catch (e) {
                         log.error("catch error", e)
