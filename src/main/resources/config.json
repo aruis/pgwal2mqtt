@@ -14,7 +14,6 @@
       "database": "postgres",
       "username": "liurui"
     }
-
   ],
   "mqtt": {
     "host": "192.168.0.88",
