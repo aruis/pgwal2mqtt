@@ -69,8 +69,9 @@ class DatabaseVerticle extends AbstractVerticle {
                                 }
 
                             }
-
-                            eb.send("db.change", new JsonArray(schemas), new DeliveryOptions().addHeader("unique", unique))
+                            if (schemas.size() > 0) {
+                                eb.send("db.change", new JsonArray(schemas), new DeliveryOptions().addHeader("unique", unique))
+                            }
                         }
                     } catch (e) {
                         log.error("catch error", e)
