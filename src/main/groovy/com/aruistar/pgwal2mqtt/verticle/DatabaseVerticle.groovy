@@ -1,4 +1,4 @@
-package com.aruistar.pgwal2mqtt
+package com.aruistar.pgwal2mqtt.verticle
 
 import com.julienviet.childprocess.Process
 import groovy.json.JsonSlurper

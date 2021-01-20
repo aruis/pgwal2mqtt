@@ -1,5 +1,7 @@
 package com.aruistar.pgwal2mqtt
 
+import com.aruistar.pgwal2mqtt.verticle.DatabaseVerticle
+import com.aruistar.pgwal2mqtt.verticle.MqttVerticle
 import groovy.util.logging.Slf4j
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.DeploymentOptions
