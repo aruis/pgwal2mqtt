@@ -5,7 +5,12 @@
       "host": "192.168.0.88",
       "port": 37324,
       "database": "ark",
-      "username": "postgres"
+      "username": "postgres",
+      "exclude": [
+        "log.*",
+        "log.log_access",
+        "*.log_access"
+      ]
     }
   ],
   "mqtt": {
