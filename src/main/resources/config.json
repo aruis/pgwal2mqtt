@@ -1,18 +1,11 @@
 {
   "dbs": [
     {
-      "unique": "topicA",
-      "host": "127.0.0.1",
-      "port": 5432,
-      "database": "studypg",
+      "unique": "pangu",
+      "host": "192.168.0.88",
+      "port": 37324,
+      "database": "ark",
       "username": "postgres"
-    },
-    {
-      "unique": "topicB",
-      "host": "127.0.0.1",
-      "port": 5433,
-      "database": "postgres",
-      "username": "liurui"
     }
   ],
   "mqtt": {

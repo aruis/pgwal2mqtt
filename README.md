@@ -34,13 +34,13 @@
     ```
    更改配置后，需要重启Postgres服务
 
-2. 在需要运行pgwal2mqtt的电脑上安装`wal2json13`（可以跟Postgres不是同一台）
+2. 在Postgres数据库服务器上安装`wal2json13`
 
     ```shell
     sudo apt-get install postgresql-13-wal2json
     ```
 
-3. 继续在本电脑安装Java环境
+3. 在需要运行pgwal2mqtt的电脑上安装Java环境
 
    ```shell
    sudo apt install openjdk-11-jre
