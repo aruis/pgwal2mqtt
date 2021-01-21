@@ -5,7 +5,12 @@
 目前发送的消息是汇总版的，类似于下面:
 
 ```json
-{"schema":"public","table":"edu_score","type":"update","num":1}
+{
+  "schema": "public",
+  "table": "edu_score",
+  "type": "update",
+  "num": 1
+}
 ```
 
 ### 原理
@@ -68,21 +73,23 @@
       }
    }
    ```
-   
+
    dbs是一个Array，可以填写多个数据库信息，需要注意的是**unique**是该数据库的代号，也是mqtt消息的**topic**一定要保证全局唯一。
    另外你可能注意到，配置里面没有出现password，因为Postgres的安全性限制不允许出现明文密码，所以你需要使用`.pgpass`
-   声明各个数据库的密码，具体可以参考文档[pgpass](http://postgres.cn/docs/13/libpq-pgpass.html) 
-   
+   声明各个数据库的密码，具体可以参考文档[pgpass](http://postgres.cn/docs/13/libpq-pgpass.html)
+
 5. 通过以下命令运行pgwal2mqtt
 
    ```shell
    java -jar pgwal2mqtt-1.0-fat.jar -conf config.json
    ```
-   
-   如果有问题，上面的.jar、.json文件均可替换成绝对路径
-   测试运行成功后，也可以把本项目当作服务启动，以实现在后台静默运行
-   
+
+   如果有问题，上面的.jar、.json文件均可替换成绝对路径 测试运行成功后，也可以把本项目当作服务启动，以实现在后台静默运行
+
    ```shell
    java -jar pgwal2mqtt-1.0-fat.jar start -conf config.json
    ```
 
+### 更新日志
+
+* 1.0.1 增加了对mqtt服务的断线重连功能
