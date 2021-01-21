@@ -53,17 +53,26 @@
    "dbs": [
          {
             "unique": "topicA",
+            "slot": "slot1",
             "host": "127.0.0.1",
             "port": 5432,
             "database": "studypg",
-            "username": "postgres"
+            "username": "postgres",
+            "exclude": [
+              "log.*",
+              "log.log_access",
+              "*.log_access"
+            ]
          },
          {
             "unique": "topicB",
             "host": "127.0.0.1",
             "port": 5433,
             "database": "postgres",
-            "username": "liurui"
+            "username": "liurui",
+            "include": [
+              "log.*"
+            ]
          }
       ],
    "mqtt": 
@@ -77,6 +86,8 @@
    dbs是一个Array，可以填写多个数据库信息，需要注意的是**unique**是该数据库的代号，也是mqtt消息的**topic**一定要保证全局唯一。
    另外你可能注意到，配置里面没有出现password，因为Postgres的安全性限制不允许出现明文密码，所以你需要使用`.pgpass`
    声明各个数据库的密码，具体可以参考文档[pgpass](http://postgres.cn/docs/13/libpq-pgpass.html)
+   
+   `slot`名称可选填，不填默认`pgwal2mqtt_slot`
 
 5. 通过以下命令运行pgwal2mqtt
 
@@ -92,4 +103,5 @@
 
 ### 更新日志
 
+* 1.0.2 支持根据配置排除某些表，或者仅包含某些表（排除优先级更高）
 * 1.0.1 增加了对mqtt服务的断线重连功能

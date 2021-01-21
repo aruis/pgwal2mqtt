@@ -2,6 +2,7 @@
   "dbs": [
     {
       "unique": "pangu",
+      "slot": "slot1",
       "host": "192.168.0.88",
       "port": 37324,
       "database": "ark",

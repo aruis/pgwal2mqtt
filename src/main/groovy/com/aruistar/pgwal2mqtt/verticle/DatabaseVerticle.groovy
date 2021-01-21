@@ -23,7 +23,7 @@ class DatabaseVerticle extends AbstractVerticle {
         def username = config.getString("username")
         def host = config.getString("host")
         def unique = config.getString("unique")
-        def slotName =config.getString("unique","test_slot")
+        def slotName = config.getString("unique", "pgwal2mqtt_slot")
         def port = config.getInteger("port")
         List<String> exclude = config.getJsonArray("exclude", new JsonArray()).toList() as List<String>
         List<String> include = config.getJsonArray("include", new JsonArray()).toList() as List<String>
@@ -65,28 +65,30 @@ class DatabaseVerticle extends AbstractVerticle {
 
                 buf.toString().eachLine {
                     try {
-                        Map json = jsonSlurper.parseText(it)
-                        if (json.containsKey("change")) {
-                            def list = json.change
-                            def schemas = []
-                            list.each {
-                                def row = [it.schema, it.table, it.kind, 1]
+                        if (!it.isBlank()) {
+                            Map json = jsonSlurper.parseText(it)
+                            if (json.containsKey("change")) {
+                                def list = json.change
+                                def schemas = []
+                                list.each {
+                                    def row = [it.schema, it.table, it.kind, 1]
 
-                                def match = schemas.find {
-                                    it[0] == row[0]
-                                            && it[1] == row[1]
-                                            && it[2] == row[2]
+                                    def match = schemas.find {
+                                        it[0] == row[0]
+                                                && it[1] == row[1]
+                                                && it[2] == row[2]
+                                    }
+
+                                    if (match) {
+                                        match[3]++
+                                    } else {
+                                        schemas << row
+                                    }
+
                                 }
-
-                                if (match) {
-                                    match[3]++
-                                } else {
-                                    schemas << row
+                                if (schemas.size() > 0) {
+                                    eb.send("db.change", new JsonArray(schemas), new DeliveryOptions().addHeader("unique", unique))
                                 }
-
-                            }
-                            if (schemas.size() > 0) {
-                                eb.send("db.change", new JsonArray(schemas), new DeliveryOptions().addHeader("unique", unique))
                             }
                         }
                     } catch (e) {
