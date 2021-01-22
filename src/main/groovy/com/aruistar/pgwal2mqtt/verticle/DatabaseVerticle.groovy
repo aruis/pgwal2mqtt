@@ -6,6 +6,7 @@ import groovy.util.logging.Slf4j
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.json.JsonArray
+import io.vertx.core.json.JsonObject
 
 @Slf4j
 class DatabaseVerticle extends AbstractVerticle {
@@ -25,6 +26,8 @@ class DatabaseVerticle extends AbstractVerticle {
         def unique = config.getString("unique")
         def slotName = config.getString("unique", "pgwal2mqtt_slot")
         def port = config.getInteger("port")
+        def summary = config.getBoolean("summary", false)
+
         List<String> exclude = config.getJsonArray("exclude", new JsonArray()).toList() as List<String>
         List<String> include = config.getJsonArray("include", new JsonArray()).toList() as List<String>
 
@@ -68,27 +71,40 @@ class DatabaseVerticle extends AbstractVerticle {
                         if (!it.isBlank()) {
                             Map json = jsonSlurper.parseText(it)
                             if (json.containsKey("change")) {
-                                def list = json.change
-                                def schemas = []
-                                list.each {
-                                    def row = [it.schema, it.table, it.kind, 1]
+                                List list = json.change
+                                if (list.size() > 0) {
+                                    if (summary) {
+                                        def schemas = []
+                                        list.each {
+                                            def row = [it.schema, it.table, it.kind, 1]
 
-                                    def match = schemas.find {
-                                        it[0] == row[0]
-                                                && it[1] == row[1]
-                                                && it[2] == row[2]
-                                    }
+                                            def match = schemas.find {
+                                                it[0] == row[0]
+                                                        && it[1] == row[1]
+                                                        && it[2] == row[2]
+                                            }
 
-                                    if (match) {
-                                        match[3]++
+                                            if (match) {
+                                                match[3]++
+                                            } else {
+                                                schemas << row
+                                            }
+
+                                        }
+                                        schemas.each {
+                                            eb.send("db.change", new JsonObject([
+                                                    schema: it[0],
+                                                    table : it[1],
+                                                    type  : it[2],
+                                                    num   : it[3]
+                                            ]), new DeliveryOptions().addHeader("unique", unique))
+                                        }
+
                                     } else {
-                                        schemas << row
+                                        eb.send("db.change", new JsonArray(list), new DeliveryOptions().addHeader("unique", unique))
                                     }
+                                }
 
-                                }
-                                if (schemas.size() > 0) {
-                                    eb.send("db.change", new JsonArray(schemas), new DeliveryOptions().addHeader("unique", unique))
-                                }
                             }
                         }
                     } catch (e) {

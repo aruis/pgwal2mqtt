@@ -13,7 +13,7 @@ plugins {
 }
 
 group 'com.aruistar'
-version '1.0.2'
+version '1.0.3'
 
 mainClassName = 'com.aruistar.pgwal2mqtt.AruisLauncher'
 def mainVerticleName = 'com.aruistar.pgwal2mqtt.MainVerticle'
