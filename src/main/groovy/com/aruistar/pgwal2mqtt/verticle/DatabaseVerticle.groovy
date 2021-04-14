@@ -35,7 +35,9 @@ class DatabaseVerticle extends AbstractVerticle {
         def filterTables = exclude.join(",")
         def addTables = include.join(",")
 
-        "pg_recvlogical -h ${host} -p ${port} -U ${username} -d ${dbName} --slot ${slotName} --create-slot -P wal2json".execute()
+        String firstSH = "pg_recvlogical -h ${host} -p ${port} -U ${username} -d ${dbName} --slot ${slotName} --create-slot -P wal2json"
+        log.info(firstSH)
+        firstSH.execute()
 
         def params = [
                 "-h", host,

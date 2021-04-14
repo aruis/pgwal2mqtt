@@ -1,0 +1,19 @@
+{
+  "dbs": [
+    {
+      "unique": "pangudocker",
+      "summary": true,
+      "host": "192.168.0.88",
+      "port": 37324,
+      "database": "ark",
+      "username": "postgres",
+      "exclude": [
+        "log.*"
+      ]
+    }
+  ],
+  "mqtt": {
+    "host": "192.168.0.88",
+    "port": 31883
+  }
+}

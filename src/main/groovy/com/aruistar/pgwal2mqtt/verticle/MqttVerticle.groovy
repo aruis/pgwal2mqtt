@@ -23,12 +23,8 @@ class MqttVerticle extends AbstractVerticle {
         def host = config.getString("host")
         def port = config.getInteger("port")
 
-
         eb = vertx.eventBus()
-
         connect(port, host)
-
-
     }
 
     def connect(int port, String host) {
@@ -40,6 +36,7 @@ class MqttVerticle extends AbstractVerticle {
         client = MqttClient.create(vertx)
         client.connect(port, host, s -> {
             if (s.succeeded()) {
+                log.info("mqtt server connected")
                 if (messageConsumer) messageConsumer.unregister()
 
                 messageConsumer = eb.consumer("db.change", {

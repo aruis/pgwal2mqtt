@@ -2,16 +2,13 @@
   "dbs": [
     {
       "unique": "pangu",
-      "slot": "slot1",
-      "summary": false,
+      "summary": true,
       "host": "192.168.0.88",
       "port": 37324,
       "database": "ark",
       "username": "postgres",
       "exclude": [
-        "log.*",
-        "log.log_access",
-        "*.log_access"
+        "log.*"
       ]
     }
   ],
