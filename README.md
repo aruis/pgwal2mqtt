@@ -2,6 +2,8 @@
 
 捕获Postgres的数据变化，并将其转发到MQTT服务（全流程异步高性能）
 
+docker run -d -v /root/pgwal2mqtt/:/usr/verticles  --restart=always  lovearuis/pgwal2mqtt:1.0.3
+
 目前发送的消息是可以根据配置提供`详细`/`汇总`两种模式，
 
 * 详细模式例子如下：
